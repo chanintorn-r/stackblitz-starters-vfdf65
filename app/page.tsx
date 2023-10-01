@@ -1,6 +1,24 @@
-import Image from 'next/image'
+'use client';
+import { useEffect } from 'react';
+import Image from 'next/image';
 
 export default function Home() {
+  useEffect(() => {
+    console.log(process.env.NEXT_PUBLIC_LIFF_ID);
+    async function initLIFF() {
+      const liff = (await import('@line/liff')).default;
+      try {
+        await liff.init({ liffId: `${process.env.NEXT_PUBLIC_LIFF_ID}` });
+      } catch (error) {
+        console.error('liff init error', error);
+      }
+      if (!liff.isLoggedIn()) {
+        liff.login();
+      }
+    }
+    initLIFF();
+  }, []);
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
@@ -109,5 +127,5 @@ export default function Home() {
         </a>
       </div>
     </main>
-  )
+  );
 }
